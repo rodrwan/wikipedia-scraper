@@ -1,6 +1,6 @@
 'use strict';
 
-var URL_BASE, SCHEMAS, Yakuza, Gurkha, _, getContent;
+var SCHEMAS, Yakuza, Gurkha, _, getContent;
 
 Yakuza = require('yakuza');
 Gurkha = require('gurkha');
@@ -42,7 +42,6 @@ function processResponse (http, body, requestStack, contentStack) {
   return syncRequest(http, requestStack, contentStack);
 }
 
-URL_BASE = 'http://en.wikipedia.org';
 SCHEMAS = {};
 
 SCHEMAS.content = {
@@ -83,7 +82,7 @@ getContent.main(function (task, http, params) {
   template = http.optionsTemplate();
 
   _.each(params.links, function (link) {
-    requestUrl = URL_BASE + link;
+    requestUrl = link;
     requestOpts = template.build({
       'url': requestUrl
     });

@@ -1,22 +1,9 @@
 'use strict';
 
-var SCHEMAS, Yakuza, Gurkha, getLinks;
+var Yakuza, Q, getLinks;
 
 Yakuza = require('yakuza');
-Gurkha = require('gurkha');
-
-SCHEMAS = {};
-
-SCHEMAS.subcategories = {
-  '$rule': '#mw-pages div.mw-content-ltr a',
-  '$sanitizer': function ($elem) {
-    return $elem.attr('href');
-  }
-};
-
-SCHEMAS.options = {
-  'normalizeWhitespace': true
-};
+Q = require('q');
 
 getLinks = Yakuza.task('Wikipedia', 'Article', 'GetLinks');
 
@@ -35,24 +22,24 @@ getLinks.hooks({
 });
 
 getLinks.main(function (task, http, params) {
-  var template, requestUrl, requestOpts;
+  var template, requestUrl, requestOpts, i, promisePocket, request;
 
-  requestUrl = 'http://en.wikipedia.org/wiki/Category:' + params.category;
+  promisePocket = [];
+  requestUrl = 'http://en.wikipedia.org/wiki/Special:' + params.category;
   template = http.optionsTemplate();
-
   requestOpts = template.build({
     'url': requestUrl
   });
 
-  http.get(requestOpts).then(function (result) {
-    var bodyParser, linkPocket;
+  for (i = 0; i < params.maxArticles; i++) {
+    request = http.get(requestOpts).then(function (result) {
+      return result.res.headers.location;
+    });
+    promisePocket.push(request);
+  }
 
-    bodyParser = new Gurkha(SCHEMAS.subcategories, SCHEMAS.options);
-    linkPocket = bodyParser.parse(result.body);
-
-    return linkPocket;
-  })
-  .then(function (links) {
+  console.log('Getting random data to seed the system.');
+  Q.all(promisePocket).then(function (links) {
     task.share('links', links);
     task.success('Total links ' + links.length);
   })

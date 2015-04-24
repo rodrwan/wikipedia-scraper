@@ -7,7 +7,8 @@ Yakuza = require('yakuza');
 require('./wikipedia/wikipedia.scraper');
 
 params = {
-  'category': 'Algorithms'
+  'category': 'Random',
+  'maxArticles': 10
 };
 
 job = Yakuza.job('Wikipedia', 'Article', params);
