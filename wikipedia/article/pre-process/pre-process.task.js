@@ -1,9 +1,9 @@
 'use strict';
 
-var Yakuza, natural, _, preProcess;
+var Yakuza, Natural, _, preProcess;
 
 Yakuza = require('yakuza');
-natural = require('natural');
+Natural = require('natural');
 _ = require('lodash');
 
 preProcess = Yakuza.task('Wikipedia', 'Article', 'PreProcess');
@@ -23,13 +23,16 @@ preProcess.hooks({
 });
 
 preProcess.main(function (task, http, params) {
-  var contentPocket;
+  var contentPocket, normalizedPocket;
 
   contentPocket = params.contentPocket;
-  natural.PorterStemmer.attach();
+  normalizedPocket = [];
+  Natural.PorterStemmer.attach();
 
   _.each(contentPocket, function (content) {
-    console.log(content.toString().tokenizeAndStem().length);
+    normalizedPocket.push(content.toString().tokenizeAndStem());
   });
 
+  task.share('dataToSave', normalizedPocket);
+  task.success('Normalized data...');
 });

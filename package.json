@@ -6,12 +6,28 @@
   "scripts": {
     "start": "node app.js"
   },
-  "author": "Rodrigo Fuenzalida (rf@finciero.com)",
+  "author": {
+    "name": "Rodrigo Fuenzalida",
+    "email": "rf@finciero.com",
+    "url": "http://www.rodrigofuenzalida.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rodrwan/wikipedia-scraper"
+  },
   "license": "MIT",
+  "keywords": [
+    "yakuza",
+    "gurkha",
+    "wikipedia",
+    "scraping",
+    "machine learning"
+  ],
   "dependencies": {
     "gurkha": "^1.1.1",
     "lodash": "^3.7.0",
     "natural": "^0.2.1",
+    "q-sqlite3": "^0.1.2",
     "yakuza": "^1.0.4"
   }
 }
