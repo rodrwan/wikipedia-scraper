@@ -1,0 +1,17 @@
+{
+  "name": "wikipedia",
+  "version": "0.0.1",
+  "description": "Wikipedia scraper",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Rodrigo Fuenzalida (rf@finciero.com)",
+  "license": "MIT",
+  "dependencies": {
+    "gurkha": "^1.1.1",
+    "lodash": "^3.7.0",
+    "natural": "^0.2.1",
+    "yakuza": "^1.0.4"
+  }
+}
