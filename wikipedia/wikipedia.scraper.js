@@ -2,7 +2,7 @@
 
 var Yakuza = require('yakuza');
 
-require('./article/article.agent');
+require('./get-articles/get-articles.agent');
 
 Yakuza.scraper('Wikipedia').routine('GetData', [
   'GetLInks',

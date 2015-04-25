@@ -6,6 +6,7 @@ Yakuza = require('yakuza');
 
 require('./wikipedia/wikipedia.scraper');
 
+// maxArticles: amount of articles to feed this app
 params = {
   'category': 'Random',
   'maxArticles': 10
