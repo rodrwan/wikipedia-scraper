@@ -14,6 +14,6 @@ Yakuza.agent('Wikipedia', 'Article')
   ])
   .routine('GetData', [
     'GetLinks',
-    'GetContent',
-    'PreProcess'
+    // 'GetContent',
+    // 'PreProcess'
   ]);

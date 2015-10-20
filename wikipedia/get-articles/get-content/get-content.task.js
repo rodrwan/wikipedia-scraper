@@ -19,8 +19,9 @@ function syncRequest (http, requestStack, contentStack) {
   if (typeof requestOpts === 'undefined') {
     return contentStack;
   }
-  console.log('Requesting...');
+  console.log(requestOpts);
   return http.get(requestOpts).then(function (result) {
+    console.log(result.body);
     return processResponse(http, result.body, requestStack, contentStack);
   });
 }
@@ -34,10 +35,16 @@ function syncRequest (http, requestStack, contentStack) {
  * @return {[type]}              [description]
  */
 function processResponse (http, body, requestStack, contentStack) {
-  var bodyParser;
+  var bodyParser, parsedContent, parsedCategories;
 
   bodyParser = new Gurkha(SCHEMAS.content, SCHEMAS.options);
-  contentStack.push(bodyParser.parse(body));
+  parsedContent = bodyParser.parse(body);
+
+  bodyParser = new Gurkha(SCHEMAS.categories, SCHEMAS.options);
+  parsedCategories = bodyParser.parse(body);
+
+  contentStack[0].push(parsedContent);
+  contentStack[1].push(parsedCategories);
 
   return syncRequest(http, requestStack, contentStack);
 }
@@ -48,6 +55,16 @@ SCHEMAS.content = {
   '$rule': '#mw-content-text p',
   '$sanitizer': function ($elem) {
     return $elem.text().replace(/\s{2,}/g, ' ').trim();
+  }
+};
+
+SCHEMAS.categories = {
+  '$rule': '#catlinks > #mw-normal-catlinks > ul > li',
+  'category': {
+    '$rule': 'a',
+    '$sanitizer': function ($elem) {
+      return $elem.attr('title').replace('Category:', '');
+    }
   }
 };
 
@@ -89,10 +106,13 @@ getContent.main(function (task, http, params) {
 
     requestStack.push(requestOpts);
   });
+
+  contentStack[0] = [];
+  contentStack[1] = [];
   // return a promise \o/
   syncRequest(http, requestStack, contentStack)
   .then(function (content) {
-    task.share('contentPocket', content);
+    task.share('extractedData', content);
     task.success('Content extraction done !');
   })
   .fail(function (err) {

@@ -9,12 +9,16 @@ _ = require('lodash');
 preProcess = Yakuza.task('Wikipedia', 'Article', 'PreProcess');
 
 preProcess.builder(function (job) {
-  return {'contentPocket': job.shared('GetContent.contentPocket')};
+  return {'extractedData': job.shared('GetContent.extractedData')};
 });
 
 preProcess.hooks({
   'onFail': function (task) {
     console.log('Retry => ' + task.runs);
+    console.log('Something went wrong with PreProcess task.');
+    console.log('Error: ')
+    console.log(task.error);
+
     if (task.runs === 3) {
       return;
     }
@@ -23,16 +27,20 @@ preProcess.hooks({
 });
 
 preProcess.main(function (task, http, params) {
-  var contentPocket, normalizedPocket;
+  var contentPocket, categoryPocket, normalizedPocket;
 
-  contentPocket = params.contentPocket;
+  contentPocket = params.extractedData[0];
+  categoryPocket = params.extractedData[1];
+
   normalizedPocket = [];
-  Natural.PorterStemmer.attach();
+  Natural.LancasterStemmer.attach();
 
   _.each(contentPocket, function (content) {
-    normalizedPocket.push(content.toString().tokenizeAndStem());
+    // if true its passed to tokenizeAndStem then stopwords appear.
+    normalizedPocket.push(content.join(' ').toString().tokenizeAndStem());
   });
 
+  console.log('Total categories: ' + categoryPocket.length);
   task.share('dataToSave', normalizedPocket);
   task.success('Normalized data...');
 });
